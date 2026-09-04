@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "dgSpecHash": "YVZX+TFKHY8=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\caiom\\Documents\\Caio Martins Castro\\Stellantis\\App\\App.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\caiom\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.10\\microsoft.aspnetcore.openapi.10.0.10.nupkg.sha512",
+    "C:\\Users\\caiom\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "O pacote 'Microsoft.OpenApi' 2.0.0 tem uma alta vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
+      "projectPath": "C:\\Users\\caiom\\Documents\\Caio Martins Castro\\Stellantis\\App\\App.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\caiom\\Documents\\Caio Martins Castro\\Stellantis\\App\\App.csproj",
+      "libraryId": "Microsoft.OpenApi",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}
