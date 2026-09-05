@@ -25,7 +25,7 @@ namespace services
         {
             this._configuration = configuration;
             this._vectorStore = new QdrantClient(
-                "http://localhost",
+                "localhost",
                 6334
             );
             this._embeddingGenerator = new OllamaApiClient(
@@ -35,7 +35,7 @@ namespace services
             this._files = new List<string>
             {
                 "Alteração Cadastral.pdf",
-                "Alteração de Contrato.pdf",
+                "Alterações de Contrato.pdf",
                 "Boletos e Pagamentos.pdf",
                 "Cadastro Sou Cliente.pdf",
                 "Documentos Financiamento.pdf",
@@ -48,7 +48,7 @@ namespace services
 
         public async Task Ingestao()
         {
-            if (await this._vectorStore.CollectionExistsAsync("Documents"))
+            if (!await this._vectorStore.CollectionExistsAsync("Documents"))
             {
                 await this._vectorStore.CreateCollectionAsync(
                     "Documents",
@@ -62,9 +62,9 @@ namespace services
 
             if (this._configuration["Ingestao:FazerIngestao"] == "true")
             {
-                string PathBase = Path.Combine(
-                    AppContext.BaseDirectory,
-                    "documents"
+                var PathBase = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "documents\\"
                 );
 
                 foreach (string file in this._files)
@@ -79,7 +79,12 @@ namespace services
                         DocumentCompleted = DocumentCompleted + page.Text;
                     }
 
-                    List<string> chunks = DocumentCompleted.Split("==================================================================").Where(x => x != "").Select(x => x.Trim()).ToList();
+                    List<string> chunks = DocumentCompleted.Split("---DOCUMENTO---").Where(x => x != "").Select(x => x.Trim()).ToList();
+
+                    foreach (string chunk in chunks)
+                    {
+                        Console.WriteLine($"{chunk}\n\n");
+                    }
 
                     foreach (string data in chunks)
                     {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace services.interfaces
+namespace App.dtos
 {
-    public interface IVectorService
+    public class MessageDTO
     {
-        
+        public string Message {get; set;} = string.Empty;
     }
 }

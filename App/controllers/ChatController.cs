@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.dtos;
+using App.services.interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.AI;
 using OllamaSharp;
@@ -12,54 +14,26 @@ namespace App.controllers
     [Route("api")]
     public class ChatController : ControllerBase
     {
-        private readonly IChatClient _client;
-        private readonly IConfiguration _configuration;
+        private readonly IChatService _chatService;
 
-        public ChatController(IConfiguration configuration)
+        public ChatController(IChatService chatService)
         {
-            this._configuration = configuration;
-
-            this._client = new OllamaApiClient(
-                new Uri(this._configuration["Ollama:Url"] ?? ""),
-                this._configuration["Ollama:EmbeddingModel"] ?? ""
-            );
-        }
-
-        [HttpPost("chat/streaming")]
-        public async Task ChatStreaming([FromBody] string user , CancellationToken cancellationToken)
-        {
-
-            Response.ContentType = "text/event-stream";
-
-            ChatOptions options = new ChatOptions
-            {
-                MaxOutputTokens = 100,
-                Temperature = 0.4f,
-                TopK = 5    
-            };
-
-            await foreach (ChatResponseUpdate response in this._client.GetStreamingResponseAsync(user , options))
-            {
-                await Response.WriteAsync($"data: {response.Text}\n\n");
-                await Response.Body.FlushAsync(cancellationToken);
-            }
+            this._chatService = chatService;
         }
 
         [HttpPost("chat")]
-        public async Task<ActionResult<string>> Chat([FromBody] string user , CancellationToken cancellationToken)
+        public async Task<ActionResult<string>> Chat([FromBody] MessageDTO message)
         {
-
-            ChatOptions options = new ChatOptions
+            try
             {
-                MaxOutputTokens = 100,
-                Temperature = 0.4f,
-                TopK = 5    
-            };
-
-            ChatResponse response = await this._client.GetResponseAsync(user , options);
-
-            return Ok(response.Text);
-
+                string response = await this._chatService.Chat(message.Message);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
     }
 }

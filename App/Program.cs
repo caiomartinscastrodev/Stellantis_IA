@@ -1,4 +1,8 @@
 using System.Text.Json.Serialization;
+using App.services;
+using App.services.interfaces;
+using services;
+using services.interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,9 @@ builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializ
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IIngestaoService , IngestaoService>();
+builder.Services.AddScoped<IChatService , ChatService>();
 
 var app = builder.Build();
 
