@@ -8,6 +8,9 @@ using OllamaSharp;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
 using services.interfaces;
+using UglyToad.PdfPig;
+using UglyToad.PdfPig.Actions;
+using UglyToad.PdfPig.Content;
 
 namespace services
 {
@@ -66,7 +69,41 @@ namespace services
 
                 foreach (string file in this._files)
                 {
-                    
+
+                    PdfDocument pdf = PdfDocument.Open(PathBase + file);
+
+                    string DocumentCompleted = "";
+
+                    foreach (Page page in pdf.GetPages())
+                    {
+                        DocumentCompleted = DocumentCompleted + page.Text;
+                    }
+
+                    List<string> chunks = DocumentCompleted.Split("==================================================================").Where(x => x != "").Select(x => x.Trim()).ToList();
+
+                    foreach (string data in chunks)
+                    {
+                        Embedding<float> embedding = await this._embeddingGenerator.GenerateAsync(data);
+                        ReadOnlyMemory<float> vector = embedding.Vector;
+                        float[] array = vector.ToArray();
+
+
+                        List<PointStruct> points = new List<PointStruct>
+                        {
+                            new PointStruct
+                            {
+                                Id = Guid.NewGuid(),
+                                Vectors = array,
+                                Payload =
+                                {
+                                    ["title"] = file.Split(".").FirstOrDefault() ?? "",
+                                    ["content"] = data
+                                }
+                            }
+                        };
+
+                        await this._vectorStore.UpsertAsync("Documents" , points);
+                    }
                 }
             }
         }
