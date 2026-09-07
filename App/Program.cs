@@ -16,15 +16,28 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IIngestaoService , IngestaoService>();
 builder.Services.AddScoped<IChatService , ChatService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
     app.MapSwagger();
     app.MapSwaggerUI();
-//}
+}
+
+app.UseCors("ReactPolicy");
 
 app.UseHttpsRedirection();
 

@@ -47,7 +47,7 @@ namespace App.controllers
 
                 await foreach (string data in this._chatService.ChatStreaming(message.Message))
                 {
-                    await Response.WriteAsync($"data: {data}");
+                    await Response.WriteAsync($"{data}");
                     await Response.Body.FlushAsync();
                 }
             }
