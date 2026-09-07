@@ -38,11 +38,9 @@ namespace App.services
 
         public async Task<string> Chat(string message)
         {
-            await this._ingestao.Ingestao();
-
             ChatOptions options = new ChatOptions
             {
-                MaxOutputTokens = 200,
+                MaxOutputTokens = 400,
                 Temperature = 0.5f,
                 TopK = 4,
                 
@@ -87,6 +85,64 @@ namespace App.services
             ChatResponse response = await this._client.GetResponseAsync(messages , options);
 
             return response.Text;
+        }
+
+        public async IAsyncEnumerable<string> ChatStreaming(string message)
+        {
+            ChatOptions options = new ChatOptions
+            {
+                TopK = 4,
+                Temperature = 0.5f,
+                MaxOutputTokens = 400
+            };
+
+            Embedding<float> embedding = await this._embeddingGenerator.GenerateAsync(message);
+            ReadOnlyMemory<float> vector = embedding.Vector;
+
+            var context = await this._vectorStore.SearchAsync(
+                "Documents",
+                vector,
+                null,
+                null,
+                2
+            );
+
+            string contextText = string.Join(
+                "\n\n",
+                context.Select(x => x.Payload["content"].StringValue).Where(x => x != "").ToList()
+            );
+
+            List<ChatMessage> messages = new()
+            {
+                new ChatMessage(
+                    ChatRole.System,
+                    $"""
+                    Você é uma assistente de IA chamada Stella.
+
+                    Você atua como assistente de IA para a empresa Stellantis Financiamento.
+
+                    Responda ao usuário de forma objetiva.
+
+                    IMPORTANTE:
+                    - Responda somente com base no CONTEXTO fornecido.
+                    - Se a resposta não estiver no contexto, diga que não possui informações suficientes.
+                    - Não invente informações.
+
+                    CONTEXTO:
+                    {contextText}
+                    """
+                ),
+                new ChatMessage(
+                    ChatRole.User,
+                    message
+                )
+            };
+
+            await foreach (ChatResponseUpdate response in this._client.GetStreamingResponseAsync(messages , options))
+            {
+                yield return response.Text;
+            }
+
         }
     }
 }
