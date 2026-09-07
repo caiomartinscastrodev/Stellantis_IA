@@ -41,15 +41,15 @@ namespace App.services
             ChatOptions options = new ChatOptions
             {
                 MaxOutputTokens = 400,
-                Temperature = 0.3f,
-                TopK = 2,
+                Temperature = 0.2f,
+                TopK = 1,
                 
             };
 
             Embedding<float> embeddedQuestion = await this._embeddingGenerator.GenerateAsync(message);
             ReadOnlyMemory<float> vector = embeddedQuestion.Vector;
 
-            var context = await this._vectorStore.SearchAsync("Documents" , vector , null , null , 2);
+            var context = await this._vectorStore.SearchAsync("Documents" , vector , null , null , 1);
 
             var contextText = string.Join(
                 "\n\n",
@@ -71,7 +71,7 @@ namespace App.services
                     - Responda somente com base no CONTEXTO fornecido.
                     - Se a resposta não estiver no contexto, diga que não possui informações suficientes.
                     - Não invente informações.
-                    - Não estenda muita a resposta
+                    - Responda de forma curta, direta e objetiva.
 
                     CONTEXTO:
                     {contextText}
@@ -92,8 +92,8 @@ namespace App.services
         {
             ChatOptions options = new ChatOptions
             {
-                TopK = 2,
-                Temperature = 0.3f,
+                TopK = 1,
+                Temperature = 0.2f,
                 MaxOutputTokens = 400
             };
 
@@ -128,7 +128,7 @@ namespace App.services
                     - Responda somente com base no CONTEXTO fornecido.
                     - Se a resposta não estiver no contexto, diga que não possui informações suficientes.
                     - Não invente informações.
-                    - Não estenda muita a resposta
+                    - Responda de forma curta, direta e objetiva.
 
                     CONTEXTO:
                     {contextText}
