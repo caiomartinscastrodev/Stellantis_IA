@@ -41,8 +41,8 @@ namespace App.services
             ChatOptions options = new ChatOptions
             {
                 MaxOutputTokens = 400,
-                Temperature = 0.5f,
-                TopK = 4,
+                Temperature = 0.3f,
+                TopK = 2,
                 
             };
 
@@ -71,6 +71,7 @@ namespace App.services
                     - Responda somente com base no CONTEXTO fornecido.
                     - Se a resposta não estiver no contexto, diga que não possui informações suficientes.
                     - Não invente informações.
+                    - Não estenda muita a resposta
 
                     CONTEXTO:
                     {contextText}
@@ -91,8 +92,8 @@ namespace App.services
         {
             ChatOptions options = new ChatOptions
             {
-                TopK = 4,
-                Temperature = 0.5f,
+                TopK = 2,
+                Temperature = 0.3f,
                 MaxOutputTokens = 400
             };
 
@@ -127,6 +128,7 @@ namespace App.services
                     - Responda somente com base no CONTEXTO fornecido.
                     - Se a resposta não estiver no contexto, diga que não possui informações suficientes.
                     - Não invente informações.
+                    - Não estenda muita a resposta
 
                     CONTEXTO:
                     {contextText}
