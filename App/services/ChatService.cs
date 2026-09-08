@@ -40,7 +40,7 @@ namespace App.services
         {
             ChatOptions options = new ChatOptions
             {
-                MaxOutputTokens = 400,
+                //MaxOutputTokens = 400,
                 Temperature = 0.2f,
                 TopK = 1,
                 
@@ -94,7 +94,7 @@ namespace App.services
             {
                 TopK = 1,
                 Temperature = 0.2f,
-                MaxOutputTokens = 400
+                //MaxOutputTokens = 400
             };
 
             Embedding<float> embedding = await this._embeddingGenerator.GenerateAsync(message);

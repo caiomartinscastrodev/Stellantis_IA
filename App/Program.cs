@@ -31,11 +31,11 @@ var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.MapSwagger();
     app.MapSwaggerUI();
-}
+//}
 
 app.UseCors("ReactPolicy");
 
