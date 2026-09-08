@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using App.services;
 using App.services.interfaces;
+using Microsoft.AspNetCore.RateLimiting;
 using services;
 using services.interfaces;
 
@@ -27,6 +28,18 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("api", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 100;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+    });
+
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
 var app = builder.Build();
 
 
@@ -42,5 +55,7 @@ app.UseCors("ReactPolicy");
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+app.UseRateLimiter();
 
 app.Run();
